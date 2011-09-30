@@ -68,7 +68,7 @@ count_cpus_darwin(Count) ->
 %%--------------------------------------------------------------------
 init([Cmd, IP, Port, SocketCount]) ->
   process_flag(trap_exit, true),
-  Forcer = get_base_dir(?MODULE) ++ "/priv/stdin_forcer",
+  Forcer = filename:join([code:priv_dir(stdinout_pool), "stdin_forcer"]),
   initial_setup(#state{cmd = Cmd, forcer = Forcer,
                        ip = IP, port = Port, count = SocketCount}).
 
@@ -183,10 +183,6 @@ setup(#state{cmd = Cmd, forcer = Forcer}) ->
   open_port({spawn_executable, Forcer},
              [stream, use_stdio, stderr_to_stdout, binary, eof,
               {args, string:tokens(Cmd, " ")}]).
-
-get_base_dir(Module) ->
-  {file, Here} = code:is_loaded(Module),
-  filename:dirname(filename:dirname(Here)).
 
 %%--------------------------------------------------------------------
 %%% oneshot TCP server callbacks/functions/executors
