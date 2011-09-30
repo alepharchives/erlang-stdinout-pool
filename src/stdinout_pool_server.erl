@@ -18,7 +18,7 @@
 %% api callbacks
 %%====================================================================
 start_link(Cmd) ->
-  gen_server:start_link({local, GenServerName}, ?MODULE,
+  gen_server:start_link(?MODULE,
     [Cmd, none, none, count_cpus()], []).
 
 start_link(GenServerName, Cmd) ->
