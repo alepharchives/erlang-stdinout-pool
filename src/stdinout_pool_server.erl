@@ -18,13 +18,16 @@
 %% api callbacks
 %%====================================================================
 start_link(Cmd) ->
-  start_link(?MODULE, Cmd).
+  gen_server:start_link({local, GenServerName}, ?MODULE,
+    [Cmd, none, none, count_cpus()], []).
 
 start_link(GenServerName, Cmd) ->
-  start_link(GenServerName, Cmd, none, none).
+  gen_server:start_link({local, GenServerName}, ?MODULE,
+    [Cmd, none, none, count_cpus()], []).
 
 start_link(GenServerName, Cmd, IP, Port) ->
-  start_link(GenServerName, Cmd, IP, Port, count_cpus()).
+  gen_server:start_link({local, GenServerName}, ?MODULE,
+    [Cmd, IP, Port, count_cpus()], []).
 
 start_link(GenServerName, Cmd, IP, Port, SocketCount) ->
   gen_server:start_link({local, GenServerName}, ?MODULE,

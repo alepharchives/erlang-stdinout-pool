@@ -1,6 +1,6 @@
 -module(stdinout).
 
--export([start_link/2, start_link/4, start_link/5]).
+-export([start_link/1, start_link/2, start_link/4, start_link/5]).
 
 -export([send/2, send/3]).
 -export([reload/1]).
@@ -9,6 +9,9 @@
 %%====================================================================
 %% Starting
 %%====================================================================
+start_link(Cmd) ->
+  stdinout_pool_server:start_link(Cmd).
+
 start_link(GenServerName, Cmd) ->
   stdinout_pool_server:start_link(GenServerName, Cmd).
 
