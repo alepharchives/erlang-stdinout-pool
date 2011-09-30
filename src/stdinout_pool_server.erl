@@ -34,7 +34,11 @@ start_link(GenServerName, Cmd, IP, Port, SocketCount) ->
     [Cmd, IP, Port, SocketCount], []).
 
 count_cpus() ->
-  count_cpus(erlang:system_info(cpu_topology), 0).
+  case os:type() of
+    {unix, darwin} -> count_cpus_darwin(0);
+    _              -> count_cpus(erlang:system_info(cpu_topology), 0)
+  end.
+
 count_cpus(undefined, Count) ->
   Count;
 count_cpus([], Count) ->
@@ -43,6 +47,13 @@ count_cpus([{node, [{processor, Cores}]} | T], Count) ->
   count_cpus(T, Count + length(Cores));
 count_cpus([{processor, Cores} | T], Count) ->
   count_cpus(T, Count + length(Cores)).
+
+count_cpus_darwin(Count) ->
+  S = os:cmd("sysctl -n hw.ncpu"),
+  case string:to_integer(S) of
+    {error, _} -> Count;
+    {N,     _} -> N
+  end.
 
 %%====================================================================
 %% gen_server callbacks
