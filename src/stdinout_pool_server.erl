@@ -46,7 +46,22 @@ count_cpus([], Count) ->
 count_cpus([{node, [{processor, Cores}]} | T], Count) ->
   count_cpus(T, Count + length(Cores));
 count_cpus([{processor, Cores} | T], Count) ->
-  count_cpus(T, Count + length(Cores)).
+    %% Examples:
+    %%
+    %% [{processor,[{core,[{thread,{logical,0}},
+    %%                     {thread,{logical,4}}]},
+    %%              {core,[{thread,{logical,1}},{thread,{logical,5}}]},
+    %%              {core,[{thread,{logical,2}},{thread,{logical,6}}]},
+    %%              {core,[{thread,{logical,3}},{thread,{logical,7}}]}]}]
+    %%
+    %% [{processor,{logical,0}},
+    %%  {processor,{logical,1}},
+    %%  {processor,{logical,2}},
+    %%  {processor,{logical,3}}]
+    %%
+    Num = try length(Cores)
+         catch _:_ -> 1 end,
+    count_cpus(T, Count + Num).
 
 count_cpus_darwin(Count) ->
   S = os:cmd("sysctl -n hw.ncpu"),
